@@ -1,0 +1,4 @@
+.git
+*.log
+reservations.json
+node_modules
