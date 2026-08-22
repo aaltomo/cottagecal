@@ -172,8 +172,8 @@ function monthCard(y, m) {
     const dateIso = iso(new Date(y, m, d));
     const cell = document.createElement("div");
     cell.className = "day";
-    const dow = new Date(y, m, d).getDay();
-    if (dow === 0 || dow === 6) cell.classList.add("weekend");
+    const wd = new Date(y, m, d).getDay();
+    if (wd === 0 || wd === 6) cell.classList.add("weekend");
     if (dateIso === todayIso) cell.classList.add("today");
     cell.textContent = d;
     const hol = hols[dateIso];
