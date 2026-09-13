@@ -45,7 +45,7 @@ const rangeHasClosedDay = (start, end) => {
 };
 
 const send = (res, code, body) => {
-  res.writeHead(code, { "Content-Type": "application/json" });
+  res.writeHead(code, { "Content-Type": "application/json", "Cache-Control": "no-store" });
   res.end(JSON.stringify(body));
 };
 
@@ -61,7 +61,7 @@ const server = http.createServer((req, res) => {
   if (req.method === "GET" && req.url === "/") {
     return fs.readFile(INDEX, (err, buf) => {
       if (err) return send(res, 500, { error: "index missing" });
-      res.writeHead(200, { "Content-Type": "text/html" });
+      res.writeHead(200, { "Content-Type": "text/html", "Cache-Control": "no-cache" });
       res.end(buf);
     });
   }
@@ -69,7 +69,7 @@ const server = http.createServer((req, res) => {
   if (req.method === "GET" && req.url === "/holidays.js") {
     return fs.readFile(path.join(__dirname, "holidays.js"), (err, buf) => {
       if (err) return send(res, 500, { error: "holidays.js missing" });
-      res.writeHead(200, { "Content-Type": "text/javascript" });
+      res.writeHead(200, { "Content-Type": "text/javascript", "Cache-Control": "no-cache" });
       res.end(buf);
     });
   }
