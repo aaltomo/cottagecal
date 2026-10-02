@@ -67,6 +67,8 @@
   form button:hover { background: var(--berry-deep); }
   form button:active { transform: scale(.97); }
   #msg { margin-top: .6rem; min-height: 1.2em; font-size: .9rem; color: var(--berry-deep); }
+  #selinfo { margin-top: 1.25rem; min-height: 1.2em; font-size: .95rem; font-weight: 600;
+             color: var(--berry-deep); }
   #upcoming, #past { margin-top: 1.25rem; font-size: .9rem; list-style: none; padding: 0; }
   #upcoming li, #past li { display: flex; justify-content: space-between; align-items: center;
              padding: .35rem .6rem; border-radius: 8px; }
@@ -84,6 +86,8 @@
   <button id="next">→</button>
 </div>
 <div id="months"></div>
+
+<div id="selinfo"></div>
 
 <form id="form">
   <input name="name" placeholder="Nimesi" required autocomplete="off" />
@@ -107,6 +111,8 @@ const color = (name) => { // stable per-name hue
   let h = 0; for (const c of name) h = (h * 31 + c.charCodeAt(0)) % 360;
   return `hsl(${h} 55% 45%)`;
 };
+// Finnish date for the selection summary — split manually, no timezone pitfalls.
+const fi = (s) => { const [y, m, d] = s.split("-").map(Number); return `${d}.${m}.${y}`; };
 
 let view = new Date(); view.setDate(1);
 let reservations = [];
@@ -198,6 +204,16 @@ function monthCard(y, m) {
   return card;
 }
 
+// Show the picked range above the form, so it's visible before "Varaa valitut päivät".
+function renderSel() {
+  const el = document.getElementById("selinfo");
+  if (anchor) { el.textContent = `Valittu alku: ${fi(anchor)}`; return; }
+  if (!sel.size) { el.textContent = ""; return; }
+  const d = [...sel].sort();
+  const nights = d.length - 1;
+  el.textContent = `Valittu: ${fi(d[0])} → ${fi(d[d.length - 1])} (${nights === 1 ? "1 yö" : nights + " yötä"})`;
+}
+
 function render() {
   const y = view.getFullYear(), m = view.getMonth();
   const next = new Date(y, m + 1, 1); // month after `view` — may roll into next year
@@ -208,6 +224,7 @@ function render() {
   const wrap = document.getElementById("months");
   wrap.innerHTML = "";
   wrap.append(monthCard(y, m), monthCard(next.getFullYear(), next.getMonth()));
+  renderSel();
   renderList();
 }
 
