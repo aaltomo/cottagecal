@@ -115,7 +115,12 @@ const server = http.createServer((req, res) => {
   }
 
   if (req.method === "DELETE" && req.url.startsWith("/reservations/")) {
-    const id = decodeURIComponent(req.url.slice("/reservations/".length));
+    let id;
+    try {
+      id = decodeURIComponent(req.url.slice("/reservations/".length));
+    } catch {
+      return send(res, 400, { error: "bad id" });
+    }
     const list = load();
     const next = list.filter((b) => b.id !== id);
     if (next.length === list.length) return send(res, 404, { error: "not found" });
